@@ -11,7 +11,7 @@ export function PhaseRing({ phase, dayOfCycle, avgCycleLength = 28, size = 160 }
 
   return (
     <svg width={size} height={size} className="rotate-[-90deg]" aria-hidden="true">
-      <circle cx={cx} cy={cy} r={radius} fill="none" stroke="#e5edf5" strokeWidth="8" />
+      <circle cx={cx} cy={cy} r={radius} fill="none" stroke="#F5DDE2" strokeWidth="8" />
       <circle
         cx={cx} cy={cy} r={radius} fill="none"
         stroke={color} strokeWidth="8"
