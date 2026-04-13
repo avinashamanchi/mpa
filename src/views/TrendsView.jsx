@@ -14,9 +14,11 @@ export function TrendsView() {
   const [tab, setTab] = useState('Cycles')
 
   return (
-    <div className="max-w-lg mx-auto px-4 pt-8">
-      <h1 className="text-3xl font-light text-heading mb-6" style={{ letterSpacing: '-0.04em' }}>Trends</h1>
-
+    <div className="max-w-3xl mx-auto">
+      <div className="px-6 pt-10 pb-4" style={{ background: 'linear-gradient(135deg, #fff0f3 0%, #ffffff 100%)' }}>
+        <h1 className="text-4xl font-light text-heading" style={{ letterSpacing: '-0.04em' }}>Trends</h1>
+      </div>
+      <div className="px-4 pt-2">
       <div className="flex border-b border-border-default mb-4">
         {TABS.map(t => (
           <button
@@ -50,6 +52,7 @@ export function TrendsView() {
           </p>
           <p className="text-xs text-body font-light mt-1">Days logged</p>
         </Card>
+      </div>
       </div>
     </div>
   )
