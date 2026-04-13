@@ -77,8 +77,11 @@ export function SettingsView() {
   const p = profile || {}
 
   return (
-    <div className="max-w-lg mx-auto px-4 pt-8 pb-12">
-      <h1 className="text-3xl font-light text-heading mb-6" style={{ letterSpacing: '-0.04em' }}>Settings</h1>
+    <div className="max-w-3xl mx-auto">
+      <div className="px-6 pt-10 pb-4" style={{ background: 'linear-gradient(135deg, #fff0f3 0%, #ffffff 100%)' }}>
+        <h1 className="text-4xl font-light text-heading" style={{ letterSpacing: '-0.04em' }}>Settings</h1>
+      </div>
+      <div className="px-4 pt-4 pb-12">
 
       {/* Privacy status banner */}
       <Card className="p-4 mb-6 flex items-start gap-3 border-primary-light bg-primary/5">
@@ -235,6 +238,7 @@ export function SettingsView() {
       <p className="text-xs text-body text-center font-light mt-6 pb-4">
         MPA v1.0 &middot; All data local &middot; No tracking &middot; No accounts
       </p>
+      </div>
     </div>
   )
 }
