@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { HashRouter, Routes, Route } from 'react-router-dom'
-import { Sidebar } from './components/layout/Sidebar.jsx'
 import { BottomNav } from './components/layout/BottomNav.jsx'
 import { DashboardView } from './views/DashboardView.jsx'
 import { LogView } from './views/LogView.jsx'
@@ -8,21 +7,33 @@ import { CalendarView } from './views/CalendarView.jsx'
 import { TrendsView } from './views/TrendsView.jsx'
 import { SettingsView } from './views/SettingsView.jsx'
 import { PinLock } from './components/PinLock.jsx'
+import { OnboardingWizard } from './components/OnboardingWizard.jsx'
 import { useProfile } from './hooks/useProfile.js'
 
 export default function App() {
   const { profile, loading } = useProfile()
   const [unlocked, setUnlocked] = useState(false)
 
-  if (!loading && profile?.pinHash && !unlocked) {
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #fff0f3 0%, #ffffff 50%, #fff8ec 100%)' }}>
+        <p className="text-body font-light text-sm">Loading…</p>
+      </div>
+    )
+  }
+
+  if (!profile?.onboardingComplete) {
+    return <OnboardingWizard onComplete={() => window.location.reload()} />
+  }
+
+  if (profile?.pinHash && !unlocked) {
     return <PinLock pinHash={profile.pinHash} onUnlock={() => setUnlocked(true)} />
   }
 
   return (
     <HashRouter>
-      <div className="flex min-h-screen bg-white">
-        <Sidebar />
-        <main className="flex-1 pb-20 lg:pb-0">
+      <div className="min-h-screen bg-white">
+        <main className="pb-28">
           <Routes>
             <Route path="/" element={<DashboardView />} />
             <Route path="/log" element={<LogView />} />
