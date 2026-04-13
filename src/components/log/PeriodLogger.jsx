@@ -12,7 +12,7 @@ export function PeriodLogger({ activeCycle, onStart, onEnd, discreetMode }) {
 
   async function handleStart() {
     setLoading(true)
-    await onStart(selectedDate)
+    await onStart(selectedDate, flow)
     setLoading(false)
   }
 

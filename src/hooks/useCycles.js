@@ -18,12 +18,12 @@ export function useCycles() {
 
   useEffect(() => { refresh() }, [refresh])
 
-  const startPeriod = useCallback(async (date = new Date().toISOString().split('T')[0]) => {
+  const startPeriod = useCallback(async (date = new Date().toISOString().split('T')[0], flow = 'Medium') => {
     const open = cycles.find(c => !c.endDate)
     if (open) {
       await updateCycle({ ...open, endDate: date, length: computeCycleLength(open.startDate, date) })
     }
-    const id = await addCycle({ startDate: date, endDate: null, length: null })
+    const id = await addCycle({ startDate: date, endDate: null, length: null, flow })
     await refresh()
     return id
   }, [cycles, refresh])
