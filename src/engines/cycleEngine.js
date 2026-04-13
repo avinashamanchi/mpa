@@ -67,6 +67,23 @@ export function getDaysUntilPeriod(predictedDateStr) {
   return differenceInDays(startOfDay(parseISO(predictedDateStr)), startOfDay(new Date()))
 }
 
+export function getConfidenceModifier(profile) {
+  if (!profile) return { extraDays: 0, isHormonalFlag: false, isLifestyleFlag: false }
+  let extraDays = 0
+  const conditions = profile.conditions || []
+  if (
+    conditions.includes('PCOS') ||
+    conditions.includes('Endometriosis') ||
+    conditions.includes('Thyroid disorder')
+  ) extraDays += 2
+  if (conditions.includes('Perimenopause')) extraDays += 1
+  if (profile.cycleRegularity === 'irregular') extraDays += 1
+  const hormonalContraceptives = ['Pill', 'Hormonal IUD', 'Implant', 'Patch']
+  const isHormonalFlag = hormonalContraceptives.includes(profile.contraceptiveType)
+  const isLifestyleFlag = profile.stressLevel === 'high' && profile.activityLevel === 'sedentary'
+  return { extraDays, isHormonalFlag, isLifestyleFlag }
+}
+
 export function getFertileWindow(lastPeriodStartDate, avgCycleLength = 28) {
   const ovDay = avgCycleLength - 14
   const start = parseISO(lastPeriodStartDate)

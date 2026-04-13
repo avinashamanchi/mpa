@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { predictNextPeriod, getCurrentPhase, getDaysUntilPeriod, computeCycleLength, detectIrregularity } from '../../src/engines/cycleEngine.js'
+import { predictNextPeriod, getCurrentPhase, getDaysUntilPeriod, computeCycleLength, detectIrregularity, getConfidenceModifier } from '../../src/engines/cycleEngine.js'
 
 describe('computeCycleLength', () => {
   it('returns days between two start dates', () => {
@@ -82,5 +82,39 @@ describe('getCurrentPhase', () => {
   it('returns luteal for days 16+', () => {
     const d = new Date(); d.setDate(d.getDate() - 20)
     expect(getCurrentPhase(d.toISOString().split('T')[0], 28).phase).toBe('luteal')
+  })
+})
+
+describe('getConfidenceModifier', () => {
+  it('returns zero extra days for clean profile', () => {
+    const r = getConfidenceModifier({ conditions: [], contraceptiveType: 'None', cycleRegularity: 'regular' })
+    expect(r.extraDays).toBe(0)
+    expect(r.isHormonalFlag).toBe(false)
+    expect(r.isLifestyleFlag).toBe(false)
+  })
+
+  it('adds 2 extra days for PCOS', () => {
+    const r = getConfidenceModifier({ conditions: ['PCOS'], contraceptiveType: 'None', cycleRegularity: 'regular' })
+    expect(r.extraDays).toBe(2)
+  })
+
+  it('adds 1 extra day for irregular self-report', () => {
+    const r = getConfidenceModifier({ conditions: [], contraceptiveType: 'None', cycleRegularity: 'irregular' })
+    expect(r.extraDays).toBe(1)
+  })
+
+  it('flags hormonal contraceptive', () => {
+    const r = getConfidenceModifier({ conditions: [], contraceptiveType: 'Pill', cycleRegularity: 'regular' })
+    expect(r.isHormonalFlag).toBe(true)
+  })
+
+  it('flags high-stress sedentary lifestyle', () => {
+    const r = getConfidenceModifier({ conditions: [], contraceptiveType: 'None', stressLevel: 'high', activityLevel: 'sedentary' })
+    expect(r.isLifestyleFlag).toBe(true)
+  })
+
+  it('handles null profile gracefully', () => {
+    const r = getConfidenceModifier(null)
+    expect(r.extraDays).toBe(0)
   })
 })
