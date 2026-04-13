@@ -10,21 +10,23 @@ const NAV_ITEMS = [
 
 export function BottomNav() {
   return (
-    <nav className="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur border-t border-border-default lg:hidden z-50">
-      <div className="flex">
+    <nav className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50">
+      <div className="flex items-center gap-1 bg-white/95 backdrop-blur-md border border-border-default rounded-full shadow-stripe-sm px-3 py-2">
         {NAV_ITEMS.map(item => (
           <NavLink
             key={item.to}
             to={item.to}
             end={item.to === '/'}
             className={({ isActive }) =>
-              `flex-1 flex flex-col items-center py-3 text-xs font-light transition-colors ${
-                isActive ? 'text-primary' : 'text-body'
+              `flex flex-col items-center px-3 py-1.5 rounded-full text-xs font-light transition-all ${
+                isActive
+                  ? 'bg-primary/10 text-primary'
+                  : 'text-body hover:text-heading hover:bg-border-default/50'
               }`
             }
           >
-            <span className="text-lg leading-none mb-0.5">{item.icon}</span>
-            {item.label}
+            <span className="text-base leading-none mb-0.5">{item.icon}</span>
+            <span className="hidden sm:block">{item.label}</span>
           </NavLink>
         ))}
       </div>
