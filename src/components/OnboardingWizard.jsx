@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { differenceInDays, parseISO } from 'date-fns'
 import { useProfile } from '../hooks/useProfile.js'
 import { addCycle } from '../storage/db.js'
 
@@ -50,6 +51,8 @@ export function OnboardingWizard({ onComplete }) {
     name: '',
     goal: '',
     lastPeriodDate: '',
+    period2Date: '',
+    period3Date: '',
     periodDuration: 5,
     cycleLength: 28,
     cycleRegularity: '',
@@ -72,8 +75,15 @@ export function OnboardingWizard({ onComplete }) {
 
   async function handleFinish() {
     await updateProfile({ ...data, onboardingComplete: true })
-    if (data.lastPeriodDate) {
-      await addCycle({ startDate: data.lastPeriodDate, endDate: null, length: null, flow: 'Medium' })
+    const dates = [data.period3Date, data.period2Date, data.lastPeriodDate]
+      .filter(Boolean)
+      .sort()
+    for (let i = 0; i < dates.length; i++) {
+      const nextDate = dates[i + 1]
+      const length = nextDate
+        ? differenceInDays(parseISO(nextDate), parseISO(dates[i]))
+        : null
+      await addCycle({ startDate: dates[i], endDate: null, length, flow: 'Medium' })
     }
     onComplete()
   }
@@ -104,37 +114,48 @@ export function OnboardingWizard({ onComplete }) {
       </div>
     </StepWrapper>,
 
-    // Step 1: Last period
+    // Step 1: Last period(s)
     <StepWrapper key="lastperiod">
       <p className="text-xs text-body uppercase tracking-widest mb-3">Step 1 of 6</p>
       <h2 className="text-3xl font-light text-heading mb-2" style={{ letterSpacing: '-0.04em' }}>
-        When did your last period start?
+        When did your recent periods start?
       </h2>
-      <p className="text-body font-light text-sm mb-8 leading-relaxed">This is the most important date for accurate predictions.</p>
-      <label className="block text-xs text-label mb-1 font-light">Start date</label>
-      <input
-        type="date"
-        value={data.lastPeriodDate}
-        onChange={e => set('lastPeriodDate', e.target.value)}
-        max={new Date().toISOString().split('T')[0]}
-        className="w-full border border-border-default rounded-lg px-4 py-3 text-sm font-light focus:outline-none focus:border-primary mb-6"
-      />
-      <label className="block text-xs text-label mb-2 font-light">How many days did it last?</label>
-      <div className="flex gap-2 flex-wrap">
-        {[2, 3, 4, 5, 6, 7, 8].map(d => (
-          <button
-            key={d}
-            onClick={() => set('periodDuration', d)}
-            className={`w-12 h-12 rounded-lg text-sm font-light border transition-all ${
-              data.periodDuration === d
-                ? 'border-primary bg-primary/10 text-primary'
-                : 'border-border-default text-body hover:border-primary/40'
-            }`}
-          >
-            {d}
-          </button>
-        ))}
+      <p className="text-body font-light text-sm mb-8 leading-relaxed">
+        Adding more dates gives me a head start on your pattern — predictions improve immediately.
+      </p>
+      <div className="space-y-4">
+        <div>
+          <label className="block text-xs text-label mb-1 font-light">Most recent period <span className="text-primary">*</span></label>
+          <input
+            type="date"
+            value={data.lastPeriodDate}
+            onChange={e => set('lastPeriodDate', e.target.value)}
+            max={new Date().toISOString().split('T')[0]}
+            className="w-full border border-border-default rounded-lg px-4 py-3 text-sm font-light focus:outline-none focus:border-primary"
+          />
+        </div>
+        <div>
+          <label className="block text-xs text-label mb-1 font-light">Period before that <span className="text-body/50">(optional)</span></label>
+          <input
+            type="date"
+            value={data.period2Date}
+            onChange={e => set('period2Date', e.target.value)}
+            max={data.lastPeriodDate || new Date().toISOString().split('T')[0]}
+            className="w-full border border-border-default rounded-lg px-4 py-3 text-sm font-light focus:outline-none focus:border-primary"
+          />
+        </div>
+        <div>
+          <label className="block text-xs text-label mb-1 font-light">One more before that <span className="text-body/50">(optional)</span></label>
+          <input
+            type="date"
+            value={data.period3Date}
+            onChange={e => set('period3Date', e.target.value)}
+            max={data.period2Date || data.lastPeriodDate || new Date().toISOString().split('T')[0]}
+            className="w-full border border-border-default rounded-lg px-4 py-3 text-sm font-light focus:outline-none focus:border-primary"
+          />
+        </div>
       </div>
+      <p className="text-xs text-body/50 font-light mt-4">Only the first date is required</p>
     </StepWrapper>,
 
     // Step 2: Cycle history
