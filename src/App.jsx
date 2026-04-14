@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { HashRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { BottomNav } from './components/layout/BottomNav.jsx'
 import { DashboardView } from './views/DashboardView.jsx'
 import { LogView } from './views/LogView.jsx'
@@ -31,7 +31,7 @@ export default function App() {
   }
 
   return (
-    <HashRouter>
+    <BrowserRouter>
       <div className="min-h-screen bg-white">
         <main className="pb-28">
           <Routes>
@@ -44,6 +44,6 @@ export default function App() {
         </main>
         <BottomNav />
       </div>
-    </HashRouter>
+    </BrowserRouter>
   )
 }
