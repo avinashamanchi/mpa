@@ -4,7 +4,7 @@ import { CycleStatusCard } from '../components/dashboard/CycleStatusCard.jsx'
 import { QuickStartButton } from '../components/dashboard/QuickStartButton.jsx'
 import { ExplainabilityPanel } from '../components/dashboard/ExplainabilityPanel.jsx'
 import { InsightStrip } from '../components/dashboard/InsightStrip.jsx'
-import { getConfidenceModifier } from '../engines/cycleEngine.js'
+import { getConfidenceModifier, getConfidenceLevel } from '../engines/cycleEngine.js'
 
 export function DashboardView() {
   const { cycles, loading, prediction, currentPhase, daysUntil, activeCycle, startPeriod, endPeriod } = useCycles()
@@ -23,6 +23,7 @@ export function DashboardView() {
   const dayOfCycle = currentPhase?.dayOfCycle ?? 1
   const avgCycleLength = prediction?.avgCycleLength ?? 28
   const modifier = getConfidenceModifier(profile)
+  const confidence = getConfidenceLevel(prediction, modifier)
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -43,6 +44,7 @@ export function DashboardView() {
           avgCycleLength={avgCycleLength}
           daysUntil={daysUntil}
           discreetMode={discreetMode}
+          confidence={confidence}
         />
         <QuickStartButton
           activePeriod={activeCycle && !activeCycle.endDate ? activeCycle : null}

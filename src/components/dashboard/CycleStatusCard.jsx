@@ -9,8 +9,15 @@ const PHASE_DESCRIPTIONS = {
   luteal: "Progesterone is high. Slow down and recharge.",
 }
 
-export function CycleStatusCard({ phase, dayOfCycle, avgCycleLength, daysUntil, discreetMode }) {
+const CONFIDENCE_CONFIG = {
+  high:   { dot: 'bg-green-400',  label: 'High confidence' },
+  medium: { dot: 'bg-amber',      label: 'Moderate estimate' },
+  low:    { dot: 'bg-primary',    label: 'Early estimate — log more cycles' },
+}
+
+export function CycleStatusCard({ phase, dayOfCycle, avgCycleLength, daysUntil, discreetMode, confidence = 'low' }) {
   const periodWord = discreetMode ? 'cycle' : 'period'
+  const conf = CONFIDENCE_CONFIG[confidence] || CONFIDENCE_CONFIG.low
   return (
     <div className="rounded-xl border border-border-default shadow-stripe-sm bg-white mb-4 overflow-hidden">
       <div className="flex flex-col items-center py-10 px-6" style={{ background: 'linear-gradient(to bottom, #ffffff, #fff8f9)' }}>
@@ -30,6 +37,10 @@ export function CycleStatusCard({ phase, dayOfCycle, avgCycleLength, daysUntil, 
           {PHASE_DESCRIPTIONS[phase] || ''}
         </p>
         <p className="text-xs text-body/60 mt-2 font-light">Day {dayOfCycle} of cycle · avg {avgCycleLength}d</p>
+        <div className="flex items-center gap-1.5 mt-3">
+          <span className={`w-1.5 h-1.5 rounded-full ${conf.dot}`} />
+          <span className="text-xs text-body/70 font-light">{conf.label}</span>
+        </div>
       </div>
     </div>
   )

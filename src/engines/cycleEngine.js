@@ -93,3 +93,13 @@ export function getFertileWindow(lastPeriodStartDate, avgCycleLength = 28) {
     ovulationDate: addDays(start, ovDay).toISOString().split('T')[0],
   }
 }
+
+export function getConfidenceLevel(prediction, modifier) {
+  if (!prediction) return 'low'
+  const { isColdStart, cyclesUsed, stddev, isIrregular } = prediction
+  const extraDays = modifier?.extraDays ?? 0
+  if (isColdStart || cyclesUsed < 2) return 'low'
+  if (extraDays >= 2 || (stddev != null && stddev > 4)) return 'low'
+  if (cyclesUsed >= 3 && (stddev == null || stddev < 2) && !isIrregular && extraDays === 0) return 'high'
+  return 'medium'
+}

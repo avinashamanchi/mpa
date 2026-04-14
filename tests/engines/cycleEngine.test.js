@@ -118,3 +118,39 @@ describe('getConfidenceModifier', () => {
     expect(r.extraDays).toBe(0)
   })
 })
+
+import { getConfidenceLevel } from '../../src/engines/cycleEngine.js'
+
+describe('getConfidenceLevel', () => {
+  it('returns low for cold start', () => {
+    expect(getConfidenceLevel({ isColdStart: true, cyclesUsed: 0, stddev: null, isIrregular: false }, { extraDays: 0 })).toBe('low')
+  })
+
+  it('returns medium for limited data', () => {
+    expect(getConfidenceLevel({ isLimitedStart: true, cyclesUsed: 2, stddev: null, isIrregular: false }, { extraDays: 0 })).toBe('medium')
+  })
+
+  it('returns high for clean regular cycles', () => {
+    expect(getConfidenceLevel({ cyclesUsed: 4, stddev: 1, isIrregular: false }, { extraDays: 0 })).toBe('high')
+  })
+
+  it('returns medium for irregular cycles', () => {
+    expect(getConfidenceLevel({ cyclesUsed: 4, stddev: 1, isIrregular: true }, { extraDays: 0 })).toBe('medium')
+  })
+
+  it('returns low for high stddev', () => {
+    expect(getConfidenceLevel({ cyclesUsed: 4, stddev: 5, isIrregular: false }, { extraDays: 0 })).toBe('low')
+  })
+
+  it('returns low when extraDays >= 2', () => {
+    expect(getConfidenceLevel({ cyclesUsed: 4, stddev: 1, isIrregular: false }, { extraDays: 2 })).toBe('low')
+  })
+
+  it('returns medium when extraDays is 1', () => {
+    expect(getConfidenceLevel({ cyclesUsed: 4, stddev: 1, isIrregular: false }, { extraDays: 1 })).toBe('medium')
+  })
+
+  it('handles null modifier gracefully', () => {
+    expect(getConfidenceLevel({ cyclesUsed: 4, stddev: 1, isIrregular: false }, null)).toBe('high')
+  })
+})
