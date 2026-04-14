@@ -152,6 +152,31 @@ export function SettingsView() {
               })}
             </div>
           </div>
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <div>
+                <label className="text-xs text-label font-light">Smart cycle length</label>
+                <p className="text-xs text-body/60 font-light mt-0.5">Auto-calculated from your logged cycles</p>
+              </div>
+              <Toggle
+                value={p.smartCycleLength !== false}
+                onChange={v => update('smartCycleLength', v)}
+              />
+            </div>
+            {p.smartCycleLength === false && (
+              <div className="mt-2">
+                <label className="block text-xs text-label mb-1 font-light">Manual cycle length (days)</label>
+                <input
+                  type="number"
+                  value={p.manualCycleLength || ''}
+                  onChange={e => update('manualCycleLength', +e.target.value)}
+                  min={21} max={45} placeholder="28"
+                  className="w-full border border-border-default rounded-lg px-4 py-2 text-sm font-light focus:outline-none focus:border-primary"
+                />
+                <p className="text-xs text-body/60 font-light mt-1">Used when you know your cycle better than your history suggests</p>
+              </div>
+            )}
+          </div>
           <div className="flex items-center justify-between">
             <label className="text-xs text-label font-light">Pregnant / Breastfeeding</label>
             <Toggle value={!!p.isPregnant} onChange={v => update('isPregnant', v)} />
